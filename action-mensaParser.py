@@ -28,18 +28,6 @@ def subscribe_intent_callback(hermes, intentMessage):
     conf = read_configuration_file(CONFIG_INI)
     action_wrapper(hermes, intentMessage, conf)
 
-import datetime, time
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-
-browseroptions = Options()
-browseroptions.headless = True
-driver = webdriver.Firefox(firefox_options=browseroptions, executable_path=r'/home/pi/geckodriver')
-
-driver.get("https://www.my-stuwe.de/mensa/mensa-reutlingen/")
-
-gerichte = ""
-
 def removeIngrHint(gericht):
     klammer_auf = gericht.find('[')
     klammer_zu = gericht.find(']') + 1
@@ -124,10 +112,24 @@ def chooseDay(request):
     driver.close()
     return gerichte
 
-def action_wrapper(hermes, intentMessage, conf):
-    gerichte = mensaApp.chooseDay(intentMessage.slots.tag.first().value)
+gerichte = ""
+driver = None
 
-    if gerichte == "":
+def action_wrapper(hermes, intentMessage, conf):
+    import datetime, time
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+
+    browseroptions = Options()
+    browseroptions.headless = True
+
+    global driver
+    driver = webdriver.chrome(options=browseroptions, executable_path=r'/home/pi/chromedriver')
+    driver.get("https://www.my-stuwe.de/mensa/mensa-reutlingen/")
+
+    gerichte = chooseDay(intentMessage.slots.tag.first().value)
+
+    if gerichte is None:
         gerichte = "Es gab wohl einen Fehler."
 
     current_session_id = intentMessage.session_id

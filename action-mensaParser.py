@@ -28,14 +28,12 @@ def subscribe_intent_callback(hermes, intentMessage):
     conf = read_configuration_file(CONFIG_INI)
     action_wrapper(hermes, intentMessage, conf)
 
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.options import Options
 import datetime, time
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 options = Options()
-options.add_argument("--headless")
-
+options.headless = True
 driver = webdriver.Firefox(options=options)
 
 driver.get("https://www.my-stuwe.de/mensa/mensa-reutlingen/")

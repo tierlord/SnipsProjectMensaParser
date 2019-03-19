@@ -18,3 +18,4 @@ fi
 . $VENV/bin/activate
 
 pip install -r requirements.txt
+chmod +x /var/lib/snips/skills/SnipsProjectMensaParser/action-mensaParser.py

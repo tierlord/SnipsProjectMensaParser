@@ -69,13 +69,6 @@ def clickLink(link, trys=0):
         print("Error")
         return
     link.click()
-    # try:
-    #     link.click()
-    # except:
-    #     print("Clicking next-btn")
-    #     elem = driver.find_element_by_class_name("meal-calendar__next")
-    #     elem.click
-    #     clickLink(link, trys+1)
         
 def chooseDay(request):
     date = datetime.datetime.now()

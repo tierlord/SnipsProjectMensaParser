@@ -42,5 +42,8 @@ def action_wrapper(hermes, intentMessage, conf):
 
     gerichte = mensaApp.chooseDay(intentMessage.slots.tag.first().value)
 
+    if gerichte == "":
+        gerichte = "Es gab wohl einen Fehler."
+
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, text=gerichte)

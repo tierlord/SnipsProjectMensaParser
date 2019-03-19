@@ -34,7 +34,7 @@ from selenium.webdriver.firefox.options import Options
 
 browseroptions = Options()
 browseroptions.headless = True
-driver = webdriver.Firefox(options=browseroptions, executable_path=r'/home/pi/geckodriver')
+driver = webdriver.Firefox(firefox_options=browseroptions, executable_path=r'/home/pi/geckodriver')
 
 driver.get("https://www.my-stuwe.de/mensa/mensa-reutlingen/")
 

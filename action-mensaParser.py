@@ -107,6 +107,7 @@ def chooseDay(request):
             print ("Requesting date: " + dateStr)
 
     global gerichte
+    global driver
     gerichte += "Folgende Gerichte gibt es " + request + " in der Mensa:\n"
     getMeals()
     driver.close()
@@ -122,6 +123,9 @@ def action_wrapper(hermes, intentMessage, conf):
 
     browseroptions = Options()
     browseroptions.headless = True
+    
+    current_session_id = intentMessage.session_id
+    hermes.publish_continue_session(current_session_id, text="Okay, ich lade die Gerichte.")
 
     global driver
     driver = webdriver.chrome(options=browseroptions, executable_path=r'/home/pi/chromedriver')
@@ -132,7 +136,7 @@ def action_wrapper(hermes, intentMessage, conf):
     if gerichte is None:
         gerichte = "Es gab wohl einen Fehler."
 
-    current_session_id = intentMessage.session_id
+    
     hermes.publish_end_session(current_session_id, text=gerichte)
 
 if __name__ == "__main__":

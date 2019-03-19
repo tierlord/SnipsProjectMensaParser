@@ -134,3 +134,9 @@ def action_wrapper(hermes, intentMessage, conf):
 
     current_session_id = intentMessage.session_id
     hermes.publish_end_session(current_session_id, text=gerichte)
+
+if __name__ == "__main__":
+    mqtt_opts = MqttOptions()
+    with Hermes(mqtt_options=mqtt_opts) as h:
+        h.subscribe_intent("{{intent_id}}", subscribe_intent_callback) \
+         .start()

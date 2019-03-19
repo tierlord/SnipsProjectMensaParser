@@ -1,13 +1,11 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.options import Options
 import datetime, time
 
-options = Options()
-options.add_argument("--headless")
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
-driver = webdriver.Firefox(options=options)
-
+browseroptions = Options()
+browseroptions.headless = True
+driver = webdriver.chrome(options=browseroptions)
 driver.get("https://www.my-stuwe.de/mensa/mensa-reutlingen/")
 
 gerichte = ""

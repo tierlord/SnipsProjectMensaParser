@@ -32,9 +32,9 @@ import datetime, time
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
-options = Options()
-options.headless = True
-driver = webdriver.Firefox(options=options, executable_path=r'/home/pi/geckodriver')
+browseroptions = Options()
+browseroptions.headless = True
+driver = webdriver.Firefox(options=browseroptions, executable_path=r'/home/pi/geckodriver')
 
 driver.get("https://www.my-stuwe.de/mensa/mensa-reutlingen/")
 

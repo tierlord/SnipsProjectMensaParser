@@ -5,11 +5,8 @@ import datetime, time
 
 chrome_options = Options()
 chrome_options.add_argument("--headless")
-try:
-    driver = webdriver.Chrome(options=chrome_options)
-except:
-    print("Could not create driver. Maybe you have the wrong Chrome version.")
-    exit()
+
+driver = webdriver.Chrome(options=chrome_options)
 
 driver.get("https://www.my-stuwe.de/mensa/mensa-reutlingen/")
 

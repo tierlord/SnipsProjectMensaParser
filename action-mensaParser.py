@@ -1,55 +1,48 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+!/usr/bin/env python3
 
-import configparser
 from hermes_python.hermes import Hermes
-from hermes_python.ffi.utils import MqttOptions
-from hermes_python.ontology import *
-import io
 
-CONFIGURATION_ENCODING_FORMAT = "utf-8"
-CONFIG_INI = "config.ini"
+path = "/home/pi/gerichte.txt"
+#path = "gerichte.txt"
 
-class SnipsConfigParser(configparser.SafeConfigParser):
-    def to_dict(self):
-        return {section : {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
+def subscribe_intent_callback(hermes, intent_message):
+    request = intent_message.slots.tag.first().value
 
-
-def read_configuration_file(configuration_file):
     try:
-        with io.open(configuration_file, encoding=CONFIGURATION_ENCODING_FORMAT) as f:
-            conf_parser = SnipsConfigParser()
-            conf_parser.readfp(f)
-            return conf_parser.to_dict()
-    except (IOError, configparser.Error) as e:
-        return dict()
+        gerichteFile = open(path, "r")
+        gerichte = gerichteFile.readlines()
+        gerichteFile.close()
+    except:
+        print("gerichte.txt not found!")
+        exit()
 
-def subscribe_intent_callback(hermes, intentMessage):
-    conf = read_configuration_file(CONFIG_INI)
-    action_wrapper(hermes, intentMessage, conf)
+    indexHeute = 0
+    indexMorgen = 0
+    indexUmorgen = 0
 
-def action_wrapper(hermes, intentMessage, conf):
-    file = open("/home/pi/gerichte.txt")
-    tag = intentMessage.slots.tag.first().value
+    for i in range (len(gerichte)):
+        line = gerichte[i]
+        if("$Heute" in line):
+            indexHeute = i
+        if("$Morgen:" in line):
+            indexMorgen = i
+        if("$Übermorgen:" in line):
+            indexUmorgen = i
 
-    buffer = file.readlines()
-    file.close()
+    msg = ""
 
-    heute = buffer[:buffer.find("$Morgen")]
-    morgen = buffer[buffer.find("$Morgen")+7:buffer.find("%Übermorgen")]
-    umorgen = buffer[buffer.find("%Übermorgen")+11:]
+    if request == "heute":
+        for i in range (indexHeute + 1, indexMorgen - 1):
+            msg += gerichte[i] + "\n"
+    if request == "morgen":
+        for i in range (indexMorgen + 1, indexUmorgen - 1):
+            msg += gerichte[i] + "\n"
+    if request == "übermorgen":
+        for i in range (indexUmorgen + 1, len(gerichte)):
+            msg += gerichte[i] + "\n"
+    msg = msg.replace("~", "")
 
-    if tag == "heute":
-        gerichte = heute
-    if tag == "morgen":
-        gerichte = morgen
-    if tag == "übermorgen":
-        gerichte = umorgen
-
-    hermes.publish_end_session(current_session_id, text=gerichte)
 
 if __name__ == "__main__":
-    mqtt_opts = MqttOptions()
-    with Hermes(mqtt_options=mqtt_opts) as h:
-        h.subscribe_intent("{{intent_id}}", subscribe_intent_callback) \
-         .start()
+    with Hermes("localhost:1883") as h:
+        h.subscribe_intents(subscribe_intent_callback).start()

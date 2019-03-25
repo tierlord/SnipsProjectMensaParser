@@ -42,6 +42,9 @@ def subscribe_intent_callback(hermes, intent_message):
             msg += gerichte[i] + "\n"
     msg = msg.replace("~", "")
 
+    current_session_id = intent_message.session_id
+    hermes.publish_end_session(current_session_id, text=msg)
+
 
 if __name__ == "__main__":
     with Hermes("localhost:1883") as h:

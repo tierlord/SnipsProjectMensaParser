@@ -2,7 +2,7 @@
 
 from hermes_python.hermes import Hermes
 
-path = "/home/pi/gerichte.txt"
+path = "/var/tmp/gerichte.txt"
 #path = "gerichte.txt"
 
 def subscribe_intent_callback(hermes, intent_message):

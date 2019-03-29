@@ -29,7 +29,7 @@ def subscribe_intent_callback(hermes, intent_message):
         if("$Übermorgen:" in line):
             indexUmorgen = i
 
-    msg = ""
+    msg = "Folgende Gerichte habe ich gefunden:\n"
 
     if request == "heute":
         for i in range (indexHeute + 1, indexMorgen - 1):

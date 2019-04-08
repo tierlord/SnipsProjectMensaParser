@@ -52,10 +52,10 @@ def subscribe_intent_callback(hermes, intent_message):
     intentName = intent_message.intent.intent_name
     request = intent_message.slots.tag.first().value
 
-    if "WasGibts" == intentName:
+    if "WasGibts" in intentName:
         return hermes.publish_continue_session(intent_message.session_id, gerichteVorlesen(request), ["Waehlen"])
 
-    if "Waehlen" == intentName:
+    if "Waehlen" in intentName:
         return hermes.publish_end_session(intent_message.session_id, gerichtWaehlen(request))
 
 

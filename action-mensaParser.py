@@ -44,25 +44,13 @@ def gerichteVorlesen (hermes, message):
     msg = msg.replace("~", "")
     msg += "\nWas darf ich für dich bestellen?"
     
-    hermes.publish_continue_session(intent_message.session_id, gerichteVorlesen(request), ["Waehlen"])
+    hermes.publish_continue_session(message.session_id, msg, ["Waehlen"])
 
 
 def gerichtWaehlen (hermes, message):
     request = message.slots.gericht.first().value
     msg = "Okay, ich habe " + request + " für dich bestellt."
-    hermes.publish_end_session(intent_message.session_id, gerichtWaehlen(request))
-
-
-def subscribe_intent_callback(hermes, intent_message):
-    intentName = intent_message.intent.intent_name
-
-    if "WasGibts" in intentName:
-        request = intent_message.slots.tag.first().value
-        hermes.publish_continue_session(intent_message.session_id, gerichteVorlesen(request), ["Waehlen"])
-
-    if "Waehlen" in intentName:
-        request = intent_message.slots.gericht.first().value
-        hermes.publish_end_session(intent_message.session_id, gerichtWaehlen(request))
+    hermes.publish_end_session(message.session_id,msg)
 
 
 if __name__ == "__main__":

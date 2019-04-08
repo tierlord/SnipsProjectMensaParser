@@ -5,9 +5,7 @@ from hermes_python.hermes import Hermes
 path = "/var/tmp/gerichte.txt"
 #path = "gerichte.txt"
 
-def subscribe_intent_callback(hermes, intent_message):
-    request = intent_message.slots.tag.first().value
-
+def gerichteVorlesen (request):
     try:
         gerichteFile = open(path, "r")
         gerichte = gerichteFile.readlines()
@@ -41,9 +39,24 @@ def subscribe_intent_callback(hermes, intent_message):
         for i in range (indexUmorgen + 1, len(gerichte)):
             msg += gerichte[i] + "\n"
     msg = msg.replace("~", "")
+    msg += "\nWas darf ich für dich bestellen?"
+    return msg
 
-    current_session_id = intent_message.session_id
-    hermes.publish_end_session(current_session_id, text=msg)
+
+def gerichtWaehlen (request):
+    msg = "Okay, ich habe {0} für dich bestellt.".format(request)
+    return msg
+
+
+def subscribe_intent_callback(hermes, intent_message):
+    intentName = intent_message.intent.intent_name
+    request = intent_message.slots.tag.first().value
+
+    if "WasGibts" == intentName:
+        return hermes.publish_continue_session(intent_message.session_id, gerichteVorlesen(request), ["Waehlen"])
+
+    if "Waehlen" == intentName:
+        return hermes.publish_end_session(intent_message.session_id, gerichtWaehlen(request))
 
 
 if __name__ == "__main__":

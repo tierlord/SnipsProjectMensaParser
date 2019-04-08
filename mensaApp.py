@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 
 browseroptions = Options()
 browseroptions.headless = True
-driver = webdriver.chrome(options=browseroptions)
+driver = webdriver.Chrome(options=browseroptions)
 driver.get("https://www.my-stuwe.de/mensa/mensa-reutlingen/")
 
 gerichte = ""

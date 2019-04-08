@@ -50,12 +50,12 @@ def gerichteVorlesen (hermes, message):
 def gerichtWaehlen (hermes, message):
     request = message.slots.gericht.first().value
     msg = "Okay, ich habe " + request + " für dich bestellt."
-    hermes.publish_end_session(message.session_id,msg)
+    hermes.publish_end_session(message.session_id, msg)
 
 
 if __name__ == "__main__":
     with Hermes("localhost:1883") as h:
         h\
-            .subscribe_intent("tierlord:WasGibts", gerichteVorlesen)\
-            .subscribe_intent("tierlord:Waehlen", gerichtWaehlen)\
+            .subscribe_intent("tierlord:WasGibts", gerichteVorlesen) \
+            .subscribe_intent("tierlord:Waehlen", gerichtWaehlen) \
             .start()

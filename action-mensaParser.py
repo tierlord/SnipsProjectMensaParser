@@ -69,5 +69,5 @@ if __name__ == "__main__":
     with Hermes("localhost:1883") as h:
         h\
             .subscribe_intent("WasGibts", gerichteVorlesen)\
-            .subscribe_intent("Waehlen", gerichtWaehlen)
+            .subscribe_intent("Waehlen", gerichtWaehlen)\
             .start()

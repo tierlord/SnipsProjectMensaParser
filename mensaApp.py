@@ -40,6 +40,7 @@ def parseMeal(meal, salat=False):
     gericht = gericht.replace("  ", " ") #
     gericht = gericht.replace(" ,", ",") # stripping
     gericht = gericht.replace(" .", ".") #
+    gericht = gericht.replace("mit mit", "mit")
 
     global gerichte
     gerichte += gericht + ".\n"
@@ -58,9 +59,9 @@ def getMeals():
         if(title == "Angebot des Tages"):
             gerichte += "Angebot des Tages ist "
             parseMeal(meal)
-        if(title == "Salat-/ Gemüsebuffet 100g"):
-            gerichte += "Beim Buffet findest du "
-            parseMeal(meal, True)
+        # if(title == "Salat-/ Gemüsebuffet 100g"):
+        #     gerichte += "Beim Buffet findest du "
+        #     parseMeal(meal, True)
 
 def clickLink(link, trys=0):
     if trys > 5:

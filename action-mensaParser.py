@@ -51,8 +51,6 @@ def gerichtWaehlen (request):
 def subscribe_intent_callback(hermes, intent_message):
     intentName = intent_message.intent.intent_name
 
-    hermes.publish_end_session(intent_message.session_id, intentName)
-
     if "WasGibts" in intentName:
         request = intent_message.slots.tag.first().value
         return hermes.publish_continue_session(intent_message.session_id, gerichteVorlesen(request), ["Waehlen"])
@@ -64,4 +62,4 @@ def subscribe_intent_callback(hermes, intent_message):
 
 if __name__ == "__main__":
     with Hermes("localhost:1883") as h:
-        h.subscribe_intents(subscribe_intent_callback).start()
+        h.subscribe_intent("WasGibts", subscribe_intent_callback).start()

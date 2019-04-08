@@ -44,7 +44,7 @@ def gerichteVorlesen (request):
 
 
 def gerichtWaehlen (request):
-    msg = "Okay, ich habe {0} für dich bestellt.".format(request)
+    msg = "Okay, ich habe " + request + " für dich bestellt."
     return msg
 
 

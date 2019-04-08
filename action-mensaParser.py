@@ -53,11 +53,11 @@ def subscribe_intent_callback(hermes, intent_message):
 
     if "WasGibts" in intentName:
         request = intent_message.slots.tag.first().value
-        return hermes.publish_continue_session(intent_message.session_id, gerichteVorlesen(request), ["Waehlen"])
+        hermes.publish_continue_session(intent_message.session_id, gerichteVorlesen(request), ["Waehlen"])
 
     if "Waehlen" in intentName:
         request = intent_message.slots.gericht.first().value
-        return hermes.publish_end_session(intent_message.session_id, gerichtWaehlen(request))
+        hermes.publish_end_session(intent_message.session_id, gerichtWaehlen(request))
 
 
 if __name__ == "__main__":

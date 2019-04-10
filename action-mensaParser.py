@@ -55,5 +55,4 @@ def gerichtWaehlen (hermes, message):
 
 if __name__ == "__main__":
     with Hermes("localhost:1883") as h:
-        h.subscribe_intent("tierlord:WasGibts", gerichteVorlesen)
-        h.start()
+        h.subscribe_intent("tierlord:WasGibts", gerichteVorlesen).start()

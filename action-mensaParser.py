@@ -53,6 +53,7 @@ def gerichtWaehlen (hermes, message):
     hermes.publish_end_session(message.session_id, msg)
 
 
-if __name__ == "__main__":
-    with Hermes("localhost:1883") as h:
-        h.subscribe_intent("tierlord:WasGibts", gerichteVorlesen).subscribe_intent("tierlord:Waehlen", gerichtWaehlen).start()
+with Hermes("localhost:1883") as h:
+    h.subscribe_intent("tierlord:WasGibts", gerichteVorlesen) \
+        .subscribe_intent("tierlord:Waehlen", gerichtWaehlen) \
+        .start()

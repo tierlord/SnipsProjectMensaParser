@@ -44,16 +44,17 @@ def gerichteVorlesen (hermes, message):
     msg = msg.replace("~", "")
     msg += "\nWas darf ich für dich bestellen?"
     
-    hermes.publish_continue_session(message.session_id, msg, ["Waehlen"])
+    return hermes.publish_continue_session(message.session_id, msg, ["Waehlen"])
 
 
 def gerichtWaehlen (hermes, message):
     request = message.slots.gericht.first().value
     msg = "Okay, ich habe " + request + " für dich bestellt."
-    hermes.publish_end_session(message.session_id, msg)
+    return hermes.publish_end_session(message.session_id, msg)
 
 
 with Hermes("localhost:1883") as h:
-    h.subscribe_intent("tierlord:WasGibts", gerichteVorlesen) \
+    h \
+        .subscribe_intent("tierlord:WasGibts", gerichteVorlesen) \
         .subscribe_intent("tierlord:Waehlen", gerichtWaehlen) \
         .start()

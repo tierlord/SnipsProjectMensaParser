@@ -28,9 +28,9 @@ def gerichteVorlesen (hermes, message):
         if("$Übermorgen:" in line):
             indexUmorgen = i
 
-    msg = "Folgende Gerichte habe ich gefunden:\n"
-    
     request = message.slots.tag.first().value
+    
+    msg = "Folgende Gerichte gibt es " + request + ":\n"
 
     if request == "heute":
         for i in range (indexHeute + 1, indexMorgen - 1):
@@ -42,7 +42,6 @@ def gerichteVorlesen (hermes, message):
         for i in range (indexUmorgen + 1, len(gerichte)):
             msg += gerichte[i] + "\n"
     msg = msg.replace("~", "")
-    msg += "\nWas darf ich für dich bestellen?"
     
     return hermes.publish_continue_session(message.session_id, msg, ["tierlord:Waehlen"])
 

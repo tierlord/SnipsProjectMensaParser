@@ -44,11 +44,13 @@ def gerichteVorlesen (hermes, message):
     msg = msg.replace("~", "")
     msg += "\nWas darf ich für dich bestellen?"
     
-    return hermes.publish_continue_session(message.session_id, msg, ["Waehlen"])
+    return hermes.publish_continue_session(message.session_id, msg, ["tierlord:Waehlen"])
 
 
 def gerichtWaehlen (hermes, message):
     request = message.slots.gericht.first().value
+    if request == "Angebot":
+        request = "das Angebot des Tages"
     msg = "Okay, ich habe " + request + " für dich bestellt."
     return hermes.publish_end_session(message.session_id, msg)
 

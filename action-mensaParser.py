@@ -5,6 +5,8 @@ import paho.mqtt.client as mqtt
 import json, time
 from threading import Thread
 
+MQTT_ADDR = "localhost"
+
 meals_json = None
 gericht_gewaehlt = None
 client = None
@@ -29,12 +31,18 @@ def parse_meals(meals, day, menu_request):
     return msg
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code " + str(rc))
-    client.subscribe("menu/#")
+    global gericht_gewaehlt
+    if gericht_gewaehlt:
+        client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
+        client.disconnect()
+        gericht_gewaehlt = None
+    else:
+        print("Connected with result code " + str(rc))
+        client.subscribe("menu/#")
 
 def on_message(client, userdata, msg):
     meals = json.loads(msg.payload.decode("utf-8-sig"))
-    client.loop_stop()
+    client.disconnect()
     global meals_json
     meals_json = meals
 
@@ -56,7 +64,7 @@ def gerichteVorlesen (hermes, message):
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect("192.168.0.227", 1883, 60)
+    client.connect(MQTT_ADDR, 1883, 60)
     client.loop_forever()
     tag = None
     menu = None
@@ -92,17 +100,12 @@ def gerichtBestaetigen (hermes, message):
         return
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
     global client
-    client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
-    gericht_gewaehlt = None
+    client.connect(MQTT_ADDR, 1883, 60)
     hermes.publish_end_session(message.session_id, msg)
 
 def session_ended(hermes, session_ended_message):
-    global gericht_gewaehlt
     global meals_json
-    global client
-    gericht_gewaehlt = None
     meals_json = None
-    client.disconnect()
 
 
 with Hermes("localhost:1883") as h:

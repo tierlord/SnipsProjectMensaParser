@@ -34,7 +34,6 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     meals = json.loads(msg.payload.decode("utf-8-sig"))
-    client.disconnect()
     client.loop_stop()
     global meals_json
     meals_json = meals
@@ -100,8 +99,11 @@ def gerichtBestaetigen (hermes, message):
 def session_ended(hermes, session_ended_message):
     global gericht_gewaehlt
     global meals_json
+    global client
     gericht_gewaehlt = None
     meals_json = None
+    client.disconnect()
+
 
 with Hermes("localhost:1883") as h:
     h \

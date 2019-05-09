@@ -81,6 +81,12 @@ def gerichtWaehlen (hermes, message):
     return hermes.publish_end_session(message.session_id, msg)
 
 def gerichtBestaetigen (hermes, message):
+    if message.slots.jaNein:
+        if message.slots.jaNein.first().value == "nein":
+            return hermes.publish_end_session(message.session_id, "Okay. Bestellung abgebrochen.")
+
+    if not gericht_gewaehlt:
+        return hermes.publish_end_session(message.session_id, "Etwas ist schief gegangen.")
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
     global client
     client.publish("menu/bestellung", gericht_gewaehlt, retain=True)

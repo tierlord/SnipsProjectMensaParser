@@ -46,10 +46,10 @@ def gerichteVorlesen (hermes, message):
     menu = None
 
     if message.slots.tag:
-        tag = message.slots.tag.first.value()
+        tag = message.slots.tag.first().value
 
     if message.slots.menu:
-        menu = message.slot.menu.first.value()
+        menu = message.slot.menu.first().value
 
     t = Thread(target=receive_meals, args=(hermes,message,tag,menu))
     t.start()

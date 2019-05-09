@@ -9,7 +9,6 @@ MQTT_ADDR = "localhost"
 
 meals_json = None
 gericht_gewaehlt = None
-client = None
 
 def parse_meals(meals, day, menu_request):
     msg = ""
@@ -65,7 +64,6 @@ def receive_meals(hermes, message, day, menu):
     return hermes.publish_end_session(message.session_id, "Es konnten keine Gerichte geladen werden.")
 
 def gerichteVorlesen (hermes, message):
-    global client
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
@@ -90,8 +88,6 @@ def gerichtWaehlen (hermes, message):
     if request == "Angebot":
         request = "das Angebot des Tages"
     msg = "Okay, ich habe " + request + " für dich bestellt."
-    global client
-    client.publish("menu/bestellung", request, retain=True)
     return hermes.publish_end_session(message.session_id, msg)
 
 def gerichtBestaetigen (hermes, message):
@@ -104,7 +100,7 @@ def gerichtBestaetigen (hermes, message):
         hermes.publish_end_session(message.session_id, "Etwas ist schief gegangen.")
         return
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
-    global client
+    client = mqtt.Client()
     client.on_connect = send_bestellung
     client.connect(MQTT_ADDR, 1883, 60)
     hermes.publish_end_session(message.session_id, msg)

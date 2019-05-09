@@ -80,6 +80,9 @@ def gerichtWaehlen (hermes, message):
     request = message.slots.gericht.first().value
     if request == "Angebot":
         request = "das Angebot des Tages"
+    client = mqtt.Client()
+    client.connect(MQTT_ADDR, 1883, 60)
+    client.publish("menu/bestellung", request, retain=True)
     msg = "Okay, ich habe " + request + " für dich bestellt."
     return hermes.publish_end_session(message.session_id, msg)
 
@@ -103,7 +106,6 @@ def gerichtBestaetigen (hermes, message):
 def session_ended(hermes, session_ended_message):
     global meals_json
     meals_json = None
-
 
 with Hermes("localhost:1883") as h:
     h \

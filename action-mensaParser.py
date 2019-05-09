@@ -18,6 +18,8 @@ def parse_meals(meals, day, menu_request):
         menu = "Tagesmenü"
     if "angebot" in menu:
         menu = "Angebot des Tages"
+    global gericht_gewaehlt
+    gericht_gewaehlt = menu
     for d in meals['meals']:
         if not day or d['day'] == day:
             for meal in d['menu']:
@@ -42,13 +44,11 @@ def receive_meals(hermes, message, day, menu):
         if meals_json:
             meals_string = parse_meals(meals_json, day, menu)
             if day and menu:
+                msg = day + " gibt es:\n"
                 print("MEALS_STRING: " + meals_string)
-                meals_string += " möchtest du das bestellen?"
-                global gericht_gewaehlt
-                gericht_gewaehlt = menu
-                return hermes.publish_continue_session(message.session_id, meals_string, ["tierlord:Bestaetigen"])
-            meals_string += " was möchtest du bestellen?"
-            return hermes.publish_continue_session(message.session_id, meals_string, ["tierlord:Waehlen"])
+                msg += meals_string + " möchtest du das bestellen?"
+                return hermes.publish_continue_session(message.session_id, msg, ["tierlord:Bestaetigen"])
+            return hermes.publish_end_session(message.session_id, meals_string, ["tierlord:Waehlen"])
         time.sleep(1)
     return hermes.publish_end_session(message.session_id, "Es konnten keine Gerichte geladen werden.")
 

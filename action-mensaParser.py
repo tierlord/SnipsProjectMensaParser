@@ -13,7 +13,7 @@ def parse_meals(meals, day, menu):
         if not day or d['day'] == day:
             for meal in d['menu']:
                 if not menu or meal['title'] == menu:
-                    mealstring = meal['title'] + ": " + meal['content']
+                    mealstring = meal['title'] + ":\n" + meal['content']
                     print(mealstring)
                     msg += mealstring + ".\n"
     return msg

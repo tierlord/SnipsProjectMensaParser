@@ -15,7 +15,7 @@ def parse_meals(meals, day, menu):
                 if not menu or meal['title'] == menu:
                     mealstring = meal['title'] + ": " + meal['content']
                     print(mealstring)
-                    msg += mealstring + "\n"
+                    msg += mealstring + ".\n"
     return msg
 
 def on_connect(client, userdata, flags, rc):
@@ -49,7 +49,7 @@ def gerichteVorlesen (hermes, message):
         tag = message.slots.tag.first().value
 
     if message.slots.menu:
-        menu = message.slot.menu.first().value
+        menu = message.slots.menu.first().value
 
     t = Thread(target=receive_meals, args=(hermes,message,tag,menu))
     t.start()

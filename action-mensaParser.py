@@ -11,6 +11,12 @@ client = None
 
 def parse_meals(meals, day, menu):
     msg = ""
+    if "vegetarisch" in menu:
+        menu = "Tagesmenü vegetarisch"
+    if "hauptmenü" in menu:
+        menu = "Tagesmenü"
+    if "angebot" in menu:
+        menu = "Angebot des Tages"
     for d in meals['meals']:
         if not day or d['day'] == day:
             for meal in d['menu']:

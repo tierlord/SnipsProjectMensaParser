@@ -31,14 +31,15 @@ def parse_meals(meals, day, menu_request):
     return msg
 
 def on_connect(client, userdata, flags, rc):
+    print("Connected with result code " + str(rc))
+    client.subscribe("menu/#")
+
+def send_bestellung(client, userdata, flags, rc):
     global gericht_gewaehlt
-    if gericht_gewaehlt:
-        client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
-        client.disconnect()
-        gericht_gewaehlt = None
-    else:
-        print("Connected with result code " + str(rc))
-        client.subscribe("menu/#")
+    print("Publish bestellung")
+    client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
+    client.disconnect()
+    gericht_gewaehlt = None
 
 def on_message(client, userdata, msg):
     meals = json.loads(msg.payload.decode("utf-8-sig"))
@@ -100,6 +101,7 @@ def gerichtBestaetigen (hermes, message):
         return
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
     global client
+    client.on_connect = send_bestellung
     client.connect(MQTT_ADDR, 1883, 60)
     hermes.publish_end_session(message.session_id, msg)
 

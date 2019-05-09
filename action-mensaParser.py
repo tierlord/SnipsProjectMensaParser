@@ -53,6 +53,7 @@ def gerichteVorlesen (hermes, message):
 
     t = Thread(target=receive_meals, args=(hermes,message,tag,menu))
     t.start()
+    t.join()
 
 
 def gerichtWaehlen (hermes, message):

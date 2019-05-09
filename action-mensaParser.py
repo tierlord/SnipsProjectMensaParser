@@ -11,7 +11,7 @@ def parse_meals(meals, day, menu):
     msg = ""
     for d in meals['meals']:
         if not day or d['day'] == day:
-            for meal in day['menu']:
+            for meal in d['menu']:
                 if not menu or meal['title'] == menu:
                     mealstring = meal['title'] + ": " + meal['content']
                     print(mealstring)

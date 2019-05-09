@@ -23,7 +23,6 @@ def parse_meals(meals, day, menu_request):
             for meal in d['menu']:
                 if not menu or meal['title'] == menu:
                     mealstring = meal['title'] + ":\n" + meal['content']
-                    print(mealstring)
                     msg += mealstring + ".\n"
     return msg
 
@@ -34,6 +33,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     meals = json.loads(msg.payload.decode("utf-8-sig"))
     client.disconnect()
+    client.loop_stop()
     global meals_json
     meals_json = meals
 
@@ -42,6 +42,7 @@ def receive_meals(hermes, message, day, menu):
         if meals_json:
             meals_string = parse_meals(meals_json, day, menu)
             if day and menu:
+                print("MEALS_STRING: " + meals_string)
                 meals_string += " möchtest du das bestellen?"
                 global gericht_gewaehlt
                 gericht_gewaehlt = menu

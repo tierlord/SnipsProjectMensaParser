@@ -80,6 +80,8 @@ def gerichtWaehlen (hermes, message):
     request = message.slots.gericht.first().value
     if request == "Angebot":
         request = "das Angebot des Tages"
+    if "vegetarisch" in request:
+        request = "Tagesmenü vegetarisch"
     client = mqtt.Client()
     client.connect(MQTT_ADDR, 1883, 60)
     client.publish("menu/bestellung", request, retain=True)

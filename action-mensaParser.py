@@ -52,12 +52,15 @@ def receive_meals(hermes, message, day, menu):
     for i in range (5):
         if meals_json:
             meals_string = parse_meals(meals_json, day, menu)
+            if meals_string == "":
+                msg = "Für " + day + " konnte kein Gericht gefunden werden."
+                return hermes.publish_end_session(message.session_id, msg)
             if day and menu:
                 msg = day + " gibt es:\n"
                 print("MEALS_STRING: " + meals_string)
                 msg += meals_string + " möchtest du das bestellen?"
                 return hermes.publish_continue_session(message.session_id, msg, ["tierlord:Bestaetigen"])
-            return hermes.publish_end_session(message.session_id, meals_string, ["tierlord:Waehlen"])
+            return hermes.publish_end_session(message.session_id, meals_string)
         time.sleep(1)
     return hermes.publish_end_session(message.session_id, "Es konnten keine Gerichte geladen werden.")
 

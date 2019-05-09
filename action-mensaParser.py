@@ -34,13 +34,6 @@ def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
     client.subscribe("menu/#")
 
-def send_bestellung(client, userdata, flags, rc):
-    global gericht_gewaehlt
-    print("Publish bestellung")
-    client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
-    client.disconnect()
-    gericht_gewaehlt = None
-
 def on_message(client, userdata, msg):
     meals = json.loads(msg.payload.decode("utf-8-sig"))
     client.disconnect()
@@ -101,8 +94,10 @@ def gerichtBestaetigen (hermes, message):
         return
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
     client = mqtt.Client()
-    client.on_connect = send_bestellung
     client.connect(MQTT_ADDR, 1883, 60)
+    print("Publish bestellung")
+    client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
+    gericht_gewaehlt = None
     hermes.publish_end_session(message.session_id, msg)
 
 def session_ended(hermes, session_ended_message):

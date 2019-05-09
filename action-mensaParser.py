@@ -13,6 +13,7 @@ client = None
 
 def parse_meals(meals, day, menu_request):
     msg = ""
+    print("MENU REQUEST: " + menu_request)
     menu = menu_request
     if "vegetarisch" in menu:
         menu = "Tagesmenü vegetarisch"

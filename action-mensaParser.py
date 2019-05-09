@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from hermes_python.hermes import Hermes
-from hermes_python.ontology.dialogue.session import DialogueConfiguration
 import paho.mqtt.client as mqtt
 import json, time
 from threading import Thread
@@ -39,7 +38,6 @@ def receive_meals(hermes, message, day, menu):
                 meals_string += " möchtest du das bestellen?"
                 global gericht_gewaehlt
                 gericht_gewaehlt = menu
-                dialogue_conf = DialogueConfiguration().enable_intent("tierlord:Bestaetigen")
                 return hermes.publish_continue_session(message.session_id, meals_string, ["tierlord:Bestaetigen"])
             meals_string += " was möchtest du bestellen?"
             return hermes.publish_continue_session(message.session_id, meals_string, ["tierlord:Waehlen"])
@@ -80,7 +78,6 @@ def gerichtBestaetigen (hermes, message):
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
     global client
     client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
-    dialogue_conf = DialogueConfiguration().disable_intent("tierlord:Bestaetigen")
     return hermes.publish_end_session(message.session_id, msg)
 
 

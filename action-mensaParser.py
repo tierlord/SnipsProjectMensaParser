@@ -1,49 +1,58 @@
 #!/usr/bin/env python3
 
 from hermes_python.hermes import Hermes
+import paho.mqtt.client as mqtt
+import json, time
+from threading import Thread
 
-path = "/var/tmp/gerichte.txt"
-#path = "gerichte.txt"
+meals_json = None
+
+def parse_meals(meals, day, menu):
+    msg = ""
+    for d in meals['meals']:
+        if not day or d['day'] == day:
+            for meal in day['menu']:
+                if not menu or meal['title'] == menu:
+                    mealstring = meal['title'] + ": " + meal['content']
+                    print(mealstring)
+                    msg += mealstring + "\n"
+    return msg
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code " + str(rc))
+    client.subscribe("menu/#")
+
+def on_message(client, userdata, msg):
+    meals = json.loads(msg.payload.decode("utf-8-sig"))
+    client.disconnect()
+    global meals_json
+    meals_json = meals
+
+def receive_meals(hermes, message, day, menu):
+    for i in range (5):
+        if meals_json:
+            meals_string = parse_meals(meals_json, day, menu)
+            return hermes.publish_continue_session(message.session_id, meals_string, ["tierlord:Waehlen"])
+        time.sleep(1)
+    return hermes.publish_end_session(message.session_id, "Es konnten keine Gerichte geladen werden.")
 
 def gerichteVorlesen (hermes, message):
-    print("Gerichte Vorlesen..")
-    try:
-        gerichteFile = open(path, "r")
-        gerichte = gerichteFile.readlines()
-        gerichteFile.close()
-    except:
-        print("gerichte.txt not found!")
-        exit()
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.connect("192.168.0.227", 1883, 60)
+    client.loop_forever()
+    tag = None
+    menu = None
 
-    indexHeute = 0
-    indexMorgen = 0
-    indexUmorgen = 0
+    if message.slots.tag:
+        tag = message.slots.tag.first.value()
 
-    for i in range (len(gerichte)):
-        line = gerichte[i]
-        if("$Heute" in line):
-            indexHeute = i
-        if("$Morgen:" in line):
-            indexMorgen = i
-        if("$Übermorgen:" in line):
-            indexUmorgen = i
+    if message.slots.menu:
+        menu = message.slot.menu.first.value()
 
-    request = message.slots.tag.first().value
-    
-    msg = "Folgende Gerichte gibt es " + request + ":\n"
-
-    if request == "heute":
-        for i in range (indexHeute + 1, indexMorgen - 1):
-            msg += gerichte[i] + "\n"
-    if request == "morgen":
-        for i in range (indexMorgen + 1, indexUmorgen - 1):
-            msg += gerichte[i] + "\n"
-    if request == "übermorgen":
-        for i in range (indexUmorgen + 1, len(gerichte)):
-            msg += gerichte[i] + "\n"
-    msg = msg.replace("~", "")
-    
-    return hermes.publish_continue_session(message.session_id, msg, ["tierlord:Waehlen"])
+    t = Thread(target=receive_meals, args=(hermes,message,tag,menu))
+    t.start()
 
 
 def gerichtWaehlen (hermes, message):

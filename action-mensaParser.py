@@ -85,18 +85,25 @@ def gerichtBestaetigen (hermes, message):
     if message.slots.jaNein:
         if message.slots.jaNein.first().value == "nein":
             return hermes.publish_end_session(message.session_id, "Okay. Bestellung abgebrochen.")
-
+    global gericht_gewaehlt
     if not gericht_gewaehlt:
         return hermes.publish_end_session(message.session_id, "Etwas ist schief gegangen.")
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
     global client
     client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
+    gericht_gewaehlt = None
     return hermes.publish_end_session(message.session_id, msg)
 
+def session_ended(hermes, session_ended_message):
+    global gericht_gewaehlt
+    global meals_json
+    gericht_gewaehlt = None
+    meals_json = None
 
 with Hermes("localhost:1883") as h:
     h \
         .subscribe_intent("tierlord:WasGibts", gerichteVorlesen) \
         .subscribe_intent("tierlord:Waehlen", gerichtWaehlen) \
         .subscribe_intent("tierlord:Bestaetigen", gerichtBestaetigen) \
+        .subscribe_session_ended(session_ended) \
         .start()

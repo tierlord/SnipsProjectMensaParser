@@ -40,7 +40,7 @@ def receive_meals(hermes, message, day, menu):
                 global gericht_gewaehlt
                 gericht_gewaehlt = menu
                 dialogue_conf = DialogueConfiguration() \
-                .enable_intent("tierlord:Bestaetigen") \
+                .enable_intent("tierlord:Bestaetigen")
                 return hermes.publish_continue_session(message.session_id, meals_string, ["tierlord:Bestaetigen"])
             meals_string += " was möchtest du bestellen?"
             return hermes.publish_continue_session(message.session_id, meals_string, ["tierlord:Waehlen"])

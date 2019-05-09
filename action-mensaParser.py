@@ -9,8 +9,9 @@ meals_json = None
 gericht_gewaehlt = None
 client = None
 
-def parse_meals(meals, day, menu):
+def parse_meals(meals, day, menu_request):
     msg = ""
+    menu = menu_request
     if "vegetarisch" in menu:
         menu = "Tagesmenü vegetarisch"
     if "hauptmenü" in menu:

@@ -12,16 +12,17 @@ gericht_gewaehlt = None
 
 def parse_meals(meals, day, menu_request):
     msg = ""
-    print("MENU REQUEST: " + menu_request)
-    menu = menu_request
-    if "vegetarisch" in menu:
-        menu = "Tagesmenü vegetarisch"
-    if "hauptmenü" in menu:
-        menu = "Tagesmenü"
-    if "angebot" in menu:
-        menu = "Angebot des Tages"
-    global gericht_gewaehlt
-    gericht_gewaehlt = menu
+    if menu_request:
+        print("MENU REQUEST: " + menu_request)
+        menu = menu_request
+        if "vegetarisch" in menu:
+            menu = "Tagesmenü vegetarisch"
+        if "hauptmenü" in menu:
+            menu = "Tagesmenü"
+        if "angebot" in menu:
+            menu = "Angebot des Tages"
+        global gericht_gewaehlt
+        gericht_gewaehlt = menu
     for d in meals['meals']:
         if not day or d['day'] == day:
             for meal in d['menu']:

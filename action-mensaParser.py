@@ -12,8 +12,8 @@ gericht_gewaehlt = None
 
 def parse_meals(meals, day, menu_request):
     msg = ""
+    menu = menu_request
     if menu_request:
-        print("MENU REQUEST: " + menu_request)
         menu = menu_request
         if "vegetarisch" in menu:
             menu = "Tagesmenü vegetarisch"

@@ -62,7 +62,7 @@ def gerichteVorlesen (hermes, message):
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect(MQTT_ADDR, 1883, 60)
-    client.loop_forever()
+    client.loop_forever(timeout=5)
     tag = None
     menu = None
 

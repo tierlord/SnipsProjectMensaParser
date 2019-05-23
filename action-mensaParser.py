@@ -104,12 +104,12 @@ def gerichtBestaetigen (hermes, message):
     f.close()
 
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
-    
+
     client = mqtt.Client()
     client.connect(MQTT_ADDR, 1883, 60)
     bestellung_obj = {
         "von" : hostname,
-        "gericht": gericht_gewaehlt
+        "gericht": gericht_gewaehlt,
         "zeit" : time.ctime()
     }
 

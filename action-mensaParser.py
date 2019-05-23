@@ -98,7 +98,7 @@ def gerichtWaehlen (hermes, message):
     }
     json_str = json.dumps(bestellung_obj)
 
-    client.publish("menu/bestellung", json_str, retain=True)
+    client.publish("menu/bestellung", payload=json_str, retain=True)
     msg = "Okay, ich habe " + request + " für dich bestellt."
     return hermes.publish_end_session(message.session_id, msg)
 
@@ -127,7 +127,7 @@ def gerichtBestaetigen (hermes, message):
     json_str = json.dumps(bestellung_obj)
 
     print("Publish bestellung")
-    client.publish("menu/bestellung", json_str, retain=True)
+    client.publish("menu/bestellung", payload=json_str, retain=True)
     gericht_gewaehlt = None
     hermes.publish_end_session(message.session_id, msg)
 

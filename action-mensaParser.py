@@ -19,7 +19,7 @@ def parse_meals(meals, day, menu_request):
     menu = menu_request
     if menu_request:
         menu = menu_request
-        if "vegetarisch" in menu:
+        if "vegetarisch" in menu or "vegan" in menu:
             menu = "Tagesmenü vegetarisch"
         if "hauptmenü" in menu:
             menu = "Tagesmenü"

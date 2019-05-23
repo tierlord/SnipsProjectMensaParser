@@ -37,7 +37,7 @@ def parse_meals(meals, day, menu_request):
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
-    client.subscribe("menu/#")
+    client.subscribe("menu/mensa")
 
 def on_message(client, userdata, msg):
     meals = json.loads(msg.payload.decode("utf-8-sig"))
@@ -94,9 +94,10 @@ def gerichtWaehlen (hermes, message):
 
     bestellung_obj = {
         "von" : hostname,
-        "gericht": request
+        "gericht": request,
+        "zeit" : time.ctime()
     }
-    json_str = json.dumps(bestellung_obj)
+    json_str = json.dumps(bestellung_obj, ensure_ascii=False)
 
     client.publish("menu/bestellung", payload=json_str, retain=True)
     msg = "Okay, ich habe " + request + " für dich bestellt."
@@ -124,7 +125,7 @@ def gerichtBestaetigen (hermes, message):
         "zeit" : time.ctime()
     }
 
-    json_str = json.dumps(bestellung_obj)
+    json_str = json.dumps(bestellung_obj, ensure_ascii=False)
 
     print("Publish bestellung")
     client.publish("menu/bestellung", payload=json_str, retain=True)

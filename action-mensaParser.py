@@ -98,11 +98,23 @@ def gerichtBestaetigen (hermes, message):
     if not gericht_gewaehlt:
         hermes.publish_end_session(message.session_id, "Etwas ist schief gegangen.")
         return
+
+    f = open("/home/pi/hostname", "r")
+    hostname = f.readline()
+    f.close()
+
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
+    
     client = mqtt.Client()
     client.connect(MQTT_ADDR, 1883, 60)
+    bestellung_obj = {
+        "von" : hostname,
+        "gericht": gericht_gewaehlt
+        "zeit" : time.ctime()
+    }
+
     print("Publish bestellung")
-    client.publish("menu/bestellung", gericht_gewaehlt, retain=True)
+    client.publish("menu/bestellung", json.dumps(bestellung_obj), retain=True)
     gericht_gewaehlt = None
     hermes.publish_end_session(message.session_id, msg)
 

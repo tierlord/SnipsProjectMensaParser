@@ -94,12 +94,11 @@ def gerichtWaehlen (hermes, message):
 
     bestellung_obj = {
         "von" : hostname,
-        "gericht": request,
-        "zeit" : time.ctime()
+        "gericht": request
     }
     json_str = json.dumps(bestellung_obj)
 
-    client.publish("menu/bestellung", request, retain=True)
+    client.publish("menu/bestellung", json_str, retain=True)
     msg = "Okay, ich habe " + request + " für dich bestellt."
     return hermes.publish_end_session(message.session_id, msg)
 

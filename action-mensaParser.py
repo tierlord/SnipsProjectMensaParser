@@ -10,6 +10,10 @@ MQTT_ADDR = "localhost"
 meals_json = None
 gericht_gewaehlt = None
 
+f = open("/home/pi/hostname", "r")
+hostname = f.readline()
+f.close()
+
 def parse_meals(meals, day, menu_request):
     msg = ""
     menu = menu_request
@@ -78,6 +82,8 @@ def gerichteVorlesen (hermes, message):
 
 
 def gerichtWaehlen (hermes, message):
+    global hostname
+
     request = message.slots.gericht.first().value
     if request == "Angebot":
         request = "das Angebot des Tages"
@@ -85,11 +91,21 @@ def gerichtWaehlen (hermes, message):
         request = "Tagesmenü vegetarisch"
     client = mqtt.Client()
     client.connect(MQTT_ADDR, 1883, 60)
+
+    bestellung_obj = {
+        "von" : hostname,
+        "gericht": request,
+        "zeit" : time.ctime()
+    }
+    json_str = json.dumps(bestellung_obj)
+
     client.publish("menu/bestellung", request, retain=True)
     msg = "Okay, ich habe " + request + " für dich bestellt."
     return hermes.publish_end_session(message.session_id, msg)
 
 def gerichtBestaetigen (hermes, message):
+    global hostname
+
     if message.slots.jaNein:
         if message.slots.jaNein.first().value == "nein":
             hermes.publish_end_session(message.session_id, "Okay. Bestellung abgebrochen.")
@@ -98,10 +114,6 @@ def gerichtBestaetigen (hermes, message):
     if not gericht_gewaehlt:
         hermes.publish_end_session(message.session_id, "Etwas ist schief gegangen.")
         return
-
-    f = open("/home/pi/hostname", "r")
-    hostname = f.readline()
-    f.close()
 
     msg = "Alles klar. Ich habe " + gericht_gewaehlt + " für dich bestellt."
 
@@ -113,8 +125,10 @@ def gerichtBestaetigen (hermes, message):
         "zeit" : time.ctime()
     }
 
+    json_str = json.dumps(bestellung_obj)
+
     print("Publish bestellung")
-    client.publish("menu/bestellung", json.dumps(bestellung_obj), retain=True)
+    client.publish("menu/bestellung", json_str, retain=True)
     gericht_gewaehlt = None
     hermes.publish_end_session(message.session_id, msg)
 

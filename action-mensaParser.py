@@ -5,15 +5,25 @@ import paho.mqtt.client as mqtt
 import json, time
 from threading import Thread
 
+######################################################################
+# Hier wird die Adresse des MQTT Brokers eingestellt
+# Snips bietet seinen eigenen Broker, sodass localhost hier genuegt
 MQTT_ADDR = "localhost"
+# Der Hostname des Raspberry Pi sollte in einer Datei namens "hostname"
+# an diesem Pfad abgelegt werden
+# Dieser Hostname wird zur Identifikation der Essensbestellung genutzt
+hostnamePath = "/home/pi/hostname"
+######################################################################
 
 meals_json = None
 gericht_gewaehlt = None
 
-f = open("/home/pi/hostname", "r")
+f = open(hostnamePath, "r")
 hostname = f.readline()
 f.close()
 
+# sucht in dem JSON (meals) nach angeforderten Menue (menu_request)
+# fuer den angeforderten Tag (day) und gibt einen String zurueck
 def parse_meals(meals, day, menu_request):
     msg = ""
     menu = menu_request
@@ -45,6 +55,8 @@ def on_message(client, userdata, msg):
     global meals_json
     meals_json = meals
 
+# Sendet die empfangenen Gerichte an das TTS
+# Bei Fehlern wird eine Fehlermeldung an das TTS gesendet
 def receive_meals(hermes, message, day, menu):
     for i in range (5):
         if meals_json:
@@ -61,6 +73,8 @@ def receive_meals(hermes, message, day, menu):
         time.sleep(1)
     return hermes.publish_end_session(message.session_id, "Es konnten keine Gerichte geladen werden.")
 
+# verbindet den MQTT client, extrahiert die slots aus dem intent
+# und startet receive_meals als neuen thread
 def gerichteVorlesen (hermes, message):
     client = mqtt.Client()
     client.on_connect = on_connect

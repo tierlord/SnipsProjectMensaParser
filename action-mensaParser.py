@@ -12,7 +12,7 @@ MQTT_ADDR = "localhost"
 # Der Hostname des Raspberry Pi sollte in einer Datei namens "hostname"
 # an diesem Pfad abgelegt werden
 # Dieser Hostname wird zur Identifikation der Essensbestellung genutzt
-hostnamePath = "/home/pi/hostname"
+hostnamePath = "/var/tmp/hostname"
 ######################################################################
 
 meals_json = None
@@ -70,7 +70,6 @@ def receive_meals(hermes, message, day, menu):
                 msg += meals_string + " möchtest du das bestellen?"
                 return hermes.publish_continue_session(message.session_id, msg, ["tierlord:Bestaetigen"])
             return hermes.publish_end_session(message.session_id, meals_string)
-        time.sleep(1)
     return hermes.publish_end_session(message.session_id, "Es konnten keine Gerichte geladen werden.")
 
 # verbindet den MQTT client, extrahiert die slots aus dem intent
@@ -90,10 +89,7 @@ def gerichteVorlesen (hermes, message):
     if message.slots.menu:
         menu = message.slots.menu.first().value
 
-    t = Thread(target=receive_meals, args=(hermes,message,tag,menu))
-    t.start()
-    t.join()
-
+    receive_meals(hermes, message, tag, menu)
 
 def gerichtWaehlen (hermes, message):
     global hostname
